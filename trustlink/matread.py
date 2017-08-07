@@ -1,11 +1,7 @@
-import xlrd
+import pandas as pd
 import numpy as np
-
-data = xlrd.open_workbook('data1.xlsx')
-table = data.sheets()[0]
-nrows = table.nrows
-ncols = table.ncols
-myarr = np.zeros([19,19])
-for i in range(nrows - 1):
-    myarr[i] = table.row_values(i + 1)[1:]
-
+def read_excel(filename):
+    data = pd.read_excel(filename)
+    data2 = data.drop(['index'], axis=1)
+    adjarr = np.array(data2)
+    return adjarr

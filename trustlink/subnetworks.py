@@ -1,5 +1,6 @@
 from numpy import *
 
+
 # Warshall算法得出可达矩阵
 def Warshall(matrix):
     Accmat = mat(matrix)
@@ -15,7 +16,7 @@ def Warshall(matrix):
     return Accmat
 
 def SubNetSplit(Accmat):
-    netsplit = []
+    netsplit = {}
     count = 1
     n = len(Accmat)
     v = list(range(1,n+1))
@@ -31,7 +32,7 @@ def SubNetSplit(Accmat):
         vcopy1.remove(k)
     v1 = vcopy1.copy()
 
-    while len(v1)!=0  and count<100:
+    while len(v1)!=0:
         # 找出leader节点
         for t in v1:
             v_leader = []
@@ -48,38 +49,43 @@ def SubNetSplit(Accmat):
                         v_follower.append(j)
 
             v_net={"leader":v_leader,"follower":v_follower}
-            netsplit.append(v_net)
-        # 更新v1
-            vcopy2 = v1.copy()
-            for k in v_leader:
-                vcopy2.remove(k)
-            v1 = vcopy2.copy()
-            if len(v1)==0:
-                break
-        count = count+1
+            print('iter % s :' % count)
+            print(v_net)
+            netsplit['% s' % count] = v_net
+        # 更新v1   与原算法不同，每次找到一个leader后，在下次迭代需要删除前面的leader.
 
-    print('the network partition is as follow:', netsplit)
+            for k in v_leader:
+                if k in v1:
+                    v1.remove(k)
+
+            # 判断V1是否为空，空的话跳出迭代过程
+            count = count+1
+
+    print('the network partition is as follow:')
+    print(netsplit)
     return netsplit,count
 
 
-example = mat([[0,1,0,0,0],
-               [0,0,0,1,0],
-               [0,0,0,0,1],
-               [1,0,1,0,1],
-               [0,0,1,0,0]
-               ])
-AccMat = Warshall(example)
-NetPar, count= SubNetSplit(AccMat)
-print("iterations is: ",count)
-example2 = mat([[0,1,0,0,0,0,0,0,0],
-               [0,0,0,1,0,0,0,0,0],
-               [0,0,0,0,1,1,0,0,1],
-               [1,0,1,0,1,0,0,0,0],
-               [0,0,1,0,0,0,0,0,0],
-               [0,0,0,0,0,0,0,0,0],
-               [0,0,0,0,0,1,0,1,0],
-               [0,0,0,0,0,1,0,0,0],
-               [0,0,0,0,0,0,0,0,0]
-                ])
-AccMat2 = Warshall(example2)
-Netpar2, count2 = SubNetSplit(AccMat2)
+if __name__=="__main__":
+
+    # example = mat([[0,1,0,0,0],
+    #                [0,0,0,1,0],
+    #                [0,0,0,0,1],
+    #                [1,0,1,0,1],
+    #                [0,0,1,0,0]
+    #                ])
+    # AccMat = Warshall(example)
+    # NetPar, count= SubNetSplit(AccMat)
+    # print("iterations is: ",count)
+    example2 = mat([[0, 1, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 1, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 1, 1, 0, 0, 1],
+                    [1, 0, 1, 0, 1, 0, 0, 0, 0],
+                    [0, 0, 1, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 1, 0, 1, 0],
+                    [0, 0, 0, 0, 0, 1, 0, 0, 0],
+                    [0, 0, 0, 0, 0, 0, 0, 0, 0]
+                    ])
+    AccMat2 = Warshall(example2)
+    Netpar2, count2 = SubNetSplit(AccMat2)
